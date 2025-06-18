@@ -1,31 +1,32 @@
-# AWS Nuke App
+# AWS Resource Cleaner
 
-![Aws Nuke](/imgs/)
+![AWS Resource Cleaner](/imgs/app.png)
 
 ## Descrição
 
-Interface web para o AWS Nuke que permite deletar todos os recursos de uma conta AWS sem precisar de alias da conta. A aplicação usa apenas o Account ID e credenciais AWS fornecidas.
+Interface web para limpar todos os recursos de uma conta AWS sem precisar de alias da conta. A aplicação usa apenas o Account ID e credenciais AWS fornecidas.
 
-## Principais Correções Implementadas
+## Principais Recursos
 
-### ✅ Problema do Alias Resolvido
-- Configurado preset `allow-no-alias` para não exigir alias da conta
-- Agora funciona apenas com Account ID + credenciais AWS
+### ✅ Limpeza Completa de Recursos
+- Deleta todos os recursos da conta AWS
+- Não exige alias da conta
+- Funciona apenas com Account ID + credenciais AWS
 
-### ✅ Configuração Corrigida
-- Estrutura YAML correta para AWS Nuke v2.25.0
-- Filtros no formato adequado com `property`, `type` e `value`
-- Feature flags para desabilitar proteção de deleção
+### ✅ Interface Amigável
+- Interface web intuitiva
+- Modo escuro/claro
+- Visualização em tempo real do progresso
 
-### ✅ Validações Adicionadas
+### ✅ Validações de Segurança
 - Validação de formato do Account ID (12 dígitos)
 - Validação de formato da AWS Access Key (AKIA...)
 - Validação de tamanho da Secret Key (40 caracteres)
 
-### ✅ Melhor Tratamento de Erros
+### ✅ Tratamento de Erros
 - Timeouts configurados (5min dry-run, 30min execução)
 - Limpeza automática de arquivos temporários
-- Mensagens de erro mais claras
+- Mensagens de erro claras
 
 ## Como Usar
 
@@ -56,47 +57,32 @@ Interface web para o AWS Nuke que permite deletar todos os recursos de uma conta
    - Clique em "Executar Nuke" apenas se tiver certeza
    - Confirme na caixa de diálogo
 
-## Configuração de Proteção
+## Recursos Protegidos
 
 Por padrão, a aplicação protege alguns recursos críticos:
 
-```yaml
-filters:
-  S3Bucket:
-    - property: Name
-      type: regex
-      value: important-.*
-  IAMRole:
-    - property: RoleName
-      value: OrganizationAccountAccessRole
-  IAMUser:
-    - property: UserName
-      value: admin
-```
-
-### Para Deletar TUDO (sem proteção):
-Remova a seção `filters` do arquivo `src-app/app.py` na função `create_config_file()`.
+- Usuário IAM "admin"
+- Role IAM "OrganizationAccountAccessRole"
+- Recursos com tags específicas
 
 ## Estrutura do Projeto
 
 ```
 nuke/
 ├── src-app/           # Aplicação Flask
-│   ├── app.py         # Aplicação principal (CORRIGIDA)
+│   ├── app.py         # Aplicação principal
+│   ├── aws_resource_cleaner.py  # Script de limpeza de recursos
 │   ├── templates/     # Templates HTML
 │   ├── static/        # CSS/JS
 │   └── requirements.txt
-├── src-nuke/          # Binário AWS Nuke
-│   ├── aws-nuke-v2.25.0-linux-amd64
-│   └── nuke-config.yml (CORRIGIDA)
-└── test_config.py     # Script de teste
+└── src-nuke/          # Binários e scripts auxiliares
 ```
 
 ## Endpoints da API
 
 - `GET /` - Interface web
-- `POST /api/dry-run` - Executa dry-run
-- `POST /api/execute` - Executa nuke real
+- `POST /api/dry-run` - Executa simulação
+- `POST /api/execute` - Executa limpeza real
 - `GET /api/health` - Verifica status da aplicação
 
 ## Segurança
@@ -107,14 +93,6 @@ nuke/
 - Mantenha backups importantes
 - Use em contas de teste/desenvolvimento
 - Nunca use em produção sem extremo cuidado
-
-## Teste da Configuração
-
-Execute o script de teste para verificar se a configuração está correta:
-
-```bash
-python test_config.py
-```
 
 ## Logs e Debug
 
