@@ -1,16 +1,10 @@
-# 🚀 AWS Resource Cleaner
+# AWS Resource Cleaner
 
 A modern web interface to clean all AWS resources from an account without requiring account alias. Uses only Account ID and temporary AWS credentials.
 
-## 🔒 **SECURITY: NO CREDENTIALS STORED**
+## **SECURITY: NO CREDENTIALS STORED**
 
-### ❌ **THIS APPLICATION NEVER STORES CREDENTIALS**
-
-- ✅ **Does not save credentials to files**
-- ✅ **Does not store credentials in database**
-- ✅ **Does not keep credentials in memory after use**
-- ✅ **Does not send credentials to external services**
-- ✅ **Does not log credentials**
+### **THIS APPLICATION NEVER STORES CREDENTIALS**
 
 ### 🔍 **How Credentials Are Handled:**
 
@@ -23,14 +17,14 @@ env.update({
     'AWS_DEFAULT_REGION': data['region']              # Discarded after use
 })
 
-# ✅ SAFE: Child process uses credentials and terminates
+# Child process uses credentials and terminates
 result = subprocess.run([script], env=env, ...)
 
-# ✅ SAFE: Variables are automatically discarded
+# Variables are automatically discarded
 # No persistence of sensitive data
 ```
 
-## 🚀 **Quick Start**
+## **Quick Start**
 
 ### 1. Install Dependencies
 ```bash
@@ -50,13 +44,13 @@ Open http://localhost:5000 and fill in:
 - AWS Secret Key (40 characters)
 - Region
 
-### 4. Test First (RECOMMENDED)
+### 4. Test First
 Click "🔍 Execute Dry-Run" to see what would be deleted
 
-### 5. Execute (CAREFUL!)
-Click "🚨 Execute Nuke" only if you're sure
+### 5. Execute
+Click "Execute Nuke" only if you're sure
 
-## 📁 **Project Structure**
+## **Project Structure**
 
 ```
 nuke/
@@ -72,7 +66,7 @@ nuke/
 └── docs/                          # Additional documentation
 ```
 
-## 🛡️ **Supported Resources**
+## **Supported Resources**
 
 | Service | Resources | Status |
 |---------|-----------|--------|
@@ -83,14 +77,14 @@ nuke/
 | **DynamoDB** | Tables | ✅ |
 | **CloudFormation** | Stacks | ✅ |
 
-## ⚠️ **Security Warnings**
+## **Security Warnings**
 
 - ✅ **Always run dry-run first**
 - ✅ **Keep important backups**
 - ✅ **Use in test/development accounts**
 - ❌ **Never use in production without extreme care**
 
-## 🧪 **Testing**
+## **Testing**
 
 ```bash
 cd tests
@@ -100,7 +94,3 @@ python test_app.py
 ## 📄 **License**
 
 MIT License - see [LICENSE](LICENSE) file for details.
-
----
-
-**⚡ Built with security and efficiency in mind!**
