@@ -1,174 +1,153 @@
-# 🔒 VERIFICAÇÃO DE SEGURANÇA - AWS Resource Cleaner
+# 🔒 Security Verification
 
-## ✅ CONFIRMAÇÃO: ZERO ARMAZENAMENTO DE CREDENCIAIS
+## ✅ CONFIRMED: ZERO CREDENTIAL STORAGE
 
-Esta aplicação foi auditada e **CONFIRMAMOS** que:
+This application has been audited and **WE CONFIRM** that:
 
-### ❌ **NÃO ARMAZENAMOS CREDENCIAIS EM:**
-- [ ] ❌ Arquivos de texto
-- [ ] ❌ Banco de dados
-- [ ] ❌ Logs do sistema
-- [ ] ❌ Arquivos de configuração
-- [ ] ❌ Cache ou memória persistente
-- [ ] ❌ Cookies ou sessões web
-- [ ] ❌ Variáveis de ambiente permanentes
-- [ ] ❌ Repositório Git
+### ❌ **WE DO NOT STORE CREDENTIALS IN:**
+- Files
+- Databases
+- System logs
+- Configuration files
+- Cache or persistent memory
+- Cookies or web sessions
+- Environment variables (permanently)
+- Git repository
 
-### ✅ **COMO TRATAMOS AS CREDENCIAIS:**
+### ✅ **HOW WE HANDLE CREDENTIALS:**
 
-#### 1. **Recebimento Seguro**
+#### 1. **Secure Reception**
 ```python
-# ✅ Credenciais recebidas via POST HTTP
+# ✅ Credentials received via HTTP POST
 data = request.json
-aws_access_key = data['aws_access_key']    # Apenas em memória RAM
-aws_secret_key = data['aws_secret_key']    # Não persistido em disco
+aws_access_key = data['aws_access_key']    # Only in RAM memory
+aws_secret_key = data['aws_secret_key']    # Not persisted to disk
 ```
 
-#### 2. **Uso Temporário**
+#### 2. **Temporary Use**
 ```python
-# ✅ Variáveis de ambiente temporárias (apenas para o processo filho)
+# ✅ Temporary environment variables (only for child process)
 env = os.environ.copy()
 env.update({
-    'AWS_ACCESS_KEY_ID': aws_access_key,      # Usado apenas nesta execução
-    'AWS_SECRET_ACCESS_KEY': aws_secret_key,  # Descartado após o uso
-    'AWS_DEFAULT_REGION': region              # Não salvo permanentemente
+    'AWS_ACCESS_KEY_ID': aws_access_key,      # Used only in this execution
+    'AWS_SECRET_ACCESS_KEY': aws_secret_key,  # Discarded after use
+    'AWS_DEFAULT_REGION': region              # Not saved permanently
 })
 
-# ✅ Processo filho executa e termina
+# ✅ Child process executes and terminates
 result = subprocess.run([script], env=env, ...)
-# Processo termina → Variáveis são automaticamente descartadas
+# Process terminates → Variables automatically discarded
 ```
 
-#### 3. **Limpeza Automática**
+#### 3. **Automatic Cleanup**
 ```python
-# ✅ Após a execução:
-# - Variável 'env' sai de escopo
-# - Processo filho termina completamente
-# - Memória é liberada pelo garbage collector
-# - Sistema operacional limpa recursos do processo
-# - Nenhum rastro permanece no sistema
+# ✅ After execution:
+# - 'env' variable goes out of scope
+# - Child process terminates completely
+# - Memory freed by garbage collector
+# - Operating system cleans process resources
+# - No traces remain in system
 ```
 
-## 🔍 **AUDITORIA TÉCNICA**
+## 🔍 **Technical Audit**
 
-### Verificação de Arquivos
+### File Verification
 ```bash
-# ✅ Verificado: Nenhuma credencial real em arquivos
+# ✅ Verified: No real credentials in files
 grep -r "AKIA[A-Z0-9]\{16\}" . --exclude-dir=.git | grep -v "AKIATEST\|AKIAEXAMPLE"
-# Resultado: Nenhuma credencial real encontrada
+# Result: No real credentials found
 ```
 
-### Verificação de Logs
+### Log Verification
 ```bash
-# ✅ Verificado: Nenhuma credencial em logs
+# ✅ Verified: No credentials in logs
 grep -r "aws_secret_key\|AWS_SECRET_ACCESS_KEY" /var/log/ 2>/dev/null
-# Resultado: Nenhuma credencial encontrada
+# Result: No credentials found
 ```
 
-### Verificação de Banco de Dados
+### Database Verification
 ```bash
-# ✅ Verificado: Aplicação não usa banco de dados
+# ✅ Verified: Application doesn't use databases
 find . -name "*.db" -o -name "*.sqlite" -o -name "*.sql"
-# Resultado: Nenhum banco de dados encontrado
+# Result: No databases found
 ```
 
-## 📋 **CHECKLIST DE SEGURANÇA**
+## 📋 **Security Checklist**
 
-### ✅ **Validações Implementadas:**
-- [x] ✅ Validação de formato do Account ID (12 dígitos)
-- [x] ✅ Validação de formato da AWS Access Key (AKIA + 16 chars)
-- [x] ✅ Validação de tamanho da Secret Key (40 caracteres)
-- [x] ✅ Timeout de segurança (5min dry-run, 30min execução)
-- [x] ✅ Confirmação obrigatória antes da execução
-- [x] ✅ Limpeza automática de arquivos temporários
+### ✅ **Implemented Validations:**
+- [x] Account ID format validation (12 digits)
+- [x] AWS Access Key format validation (AKIA + 16 chars)
+- [x] Secret Key length validation (40 characters)
+- [x] Security timeout (5min dry-run, 30min execution)
+- [x] Mandatory confirmation before execution
+- [x] Automatic cleanup of temporary files
 
-### ✅ **Proteções de Segurança:**
-- [x] ✅ Recursos críticos protegidos por padrão
-- [x] ✅ Security Group "default" preservado
-- [x] ✅ IAM Role "OrganizationAccountAccessRole" preservado
-- [x] ✅ Recursos "in-use" protegidos
-- [x] ✅ Tratamento de erros sem exposição de credenciais
+### ✅ **Security Protections:**
+- [x] Critical resources protected by default
+- [x] "default" Security Group preserved
+- [x] "OrganizationAccountAccessRole" IAM Role preserved
+- [x] "in-use" resources protected
+- [x] Error handling without credential exposure
 
-### ✅ **Configurações de Segurança:**
-- [x] ✅ .gitignore configurado para ignorar credenciais
-- [x] ✅ Logs não contêm informações sensíveis
-- [x] ✅ Processo filho isolado e temporário
-- [x] ✅ Variáveis de ambiente não persistentes
+## 🛡️ **Practical Security Example**
 
-## 🛡️ **EXEMPLO PRÁTICO DE SEGURANÇA**
-
-### Cenário: Usuário insere credenciais
+### Scenario: User enters credentials
 ```
-1. 👤 Usuário digita na interface web:
+1. 👤 User types in web interface:
    Account ID: 123456789012
    Access Key: AKIA1234567890123456
    Secret Key: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
    Region: us-east-1
 
-2. 📡 Dados enviados via HTTPS POST para /api/dry-run
+2. 📡 Data sent via HTTPS POST to /api/dry-run
 
-3. 🔒 Aplicação recebe dados em memória:
-   data = request.json  # Apenas em RAM
+3. 🔒 Application receives data in memory:
+   data = request.json  # Only in RAM
 
-4. ⚡ Processo filho criado com env temporário:
+4. ⚡ Child process created with temporary env:
    subprocess.run([script], env=temp_env, ...)
 
-5. 🗑️  Processo termina, memória liberada:
-   - Variáveis saem de escopo
-   - Processo filho termina
-   - Sistema operacional limpa recursos
-   - Nenhum rastro permanece
+5. 🗑️  Process terminates, memory freed:
+   - Variables go out of scope
+   - Child process terminates
+   - Operating system cleans resources
+   - No traces remain
 
-6. 📊 Resultado retornado ao usuário:
-   - Apenas saída do comando
-   - Sem credenciais na resposta
+6. 📊 Result returned to user:
+   - Only command output
+   - No credentials in response
 ```
 
-### Verificação Pós-Execução
+### Post-Execution Verification
 ```bash
-# ✅ Verificar que não há rastros:
-ps aux | grep aws                    # Nenhum processo AWS rodando
-env | grep AWS                       # Nenhuma variável AWS permanente
-find /tmp -name "*aws*" 2>/dev/null  # Nenhum arquivo temporário
+# ✅ Verify no traces remain:
+ps aux | grep aws                    # No AWS processes running
+env | grep AWS                       # No permanent AWS variables
+find /tmp -name "*aws*" 2>/dev/null  # No temporary files
 ```
 
-## 🚨 **GARANTIAS DE SEGURANÇA**
+## 🚨 **Security Guarantees**
 
-### **GARANTIMOS QUE:**
-1. ✅ **Credenciais NUNCA são salvas em arquivos**
-2. ✅ **Credenciais NUNCA são armazenadas em banco de dados**
-3. ✅ **Credenciais NUNCA aparecem em logs**
-4. ✅ **Credenciais NUNCA são enviadas para terceiros**
-5. ✅ **Credenciais são usadas APENAS temporariamente**
-6. ✅ **Processo termina SEM deixar rastros**
-7. ✅ **Memória é limpa automaticamente**
-8. ✅ **Aplicação é stateless (sem estado)**
-
-### **RESPONSABILIDADE DO USUÁRIO:**
-- 🔐 Manter credenciais seguras
-- 🔐 Usar credenciais temporárias quando possível
-- 🔐 Não compartilhar credenciais
-- 🔐 Monitorar uso via CloudTrail
-- 🔐 Revogar credenciais após uso
-
-## 📞 **CONTATO DE SEGURANÇA**
-
-Se você encontrar alguma vulnerabilidade ou tiver dúvidas sobre segurança:
-
-- 🔒 **Para vulnerabilidades críticas:** Reporte via GitHub Security Advisory
-- 📧 **Para dúvidas gerais:** Abra uma issue no GitHub
-- 🛡️ **Para auditoria:** Consulte este documento e o código-fonte
+### **WE GUARANTEE THAT:**
+1. ✅ **Credentials are NEVER saved to files**
+2. ✅ **Credentials are NEVER stored in databases**
+3. ✅ **Credentials NEVER appear in logs**
+4. ✅ **Credentials are NEVER sent to third parties**
+5. ✅ **Credentials are used ONLY temporarily**
+6. ✅ **Process terminates WITHOUT leaving traces**
+7. ✅ **Memory is cleaned automatically**
+8. ✅ **Application is stateless**
 
 ---
 
-## ✅ **CERTIFICAÇÃO DE SEGURANÇA**
+## ✅ **Security Certification**
 
-**Certificamos que esta aplicação foi desenvolvida seguindo as melhores práticas de segurança e NÃO ARMAZENA credenciais AWS em qualquer forma.**
+**We certify that this application was developed following security best practices and DOES NOT STORE AWS credentials in any form.**
 
-**Data da Auditoria:** 2025-06-18  
-**Versão Auditada:** v1.0.0  
-**Status:** ✅ APROVADO - SEGURO PARA USO
+**Audit Date:** 2025-06-18  
+**Audited Version:** v1.0.0  
+**Status:** ✅ APPROVED - SAFE FOR USE
 
 ---
 
-**🛡️ Sua segurança é nossa prioridade máxima!**
+**🛡️ Your security is our top priority!**
