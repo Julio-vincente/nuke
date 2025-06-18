@@ -91,11 +91,11 @@ cd tests
 python test_app.py
 ```
 
-## 📄 **License**
+## **License**
 
 MIT License - see [LICENSE](LICENSE) file for details.
 
-## 📥 **AWS Nuke Binary (Optional)**
+## **AWS Nuke Binary (Optional)**
 
 The AWS Nuke binary is not included due to GitHub file size limits. If you want to use the original AWS Nuke:
 
