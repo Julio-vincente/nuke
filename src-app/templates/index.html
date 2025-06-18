@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS Nuke Interface</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<input type="hidden" id="has_alias" value="false">
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>AWS Nuke Interface</h1>
+            <div class="theme-switch">
+                <span class="theme-switch-label">Modo Escuro</span>
+                <label class="switch">
+                    <input type="checkbox" id="theme-toggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+        
+        <div class="danger-zone">
+            <h2>⚠️ ZONA DE PERIGO</h2>
+            <p>Esta ferramenta irá REMOVER PERMANENTEMENTE todos os recursos na conta AWS especificada.</p>
+        </div>
+
+        <div class="form-section">
+            <h2>Configuração AWS</h2>
+            <div class="form-group">
+                <label for="account_id">AWS Account ID:</label>
+                <input type="text" id="account_id" placeholder="123456789012" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="aws_access_key">AWS Access Key ID:</label>
+                <input type="text" id="aws_access_key" placeholder="AKIA..." required>
+            </div>
+            
+            <div class="form-group">
+                <label for="aws_secret_key">AWS Secret Access Key:</label>
+                <input type="password" id="aws_secret_key" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="region">AWS Region:</label>
+                <select id="region">
+                    <option value="us-east-1">us-east-1 (N. Virginia)</option>
+                    <option value="sa-east-1">sa-east-1 (São Paulo)</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="actions">
+            <button id="dry-run-btn" class="btn secondary">Executar Dry-Run</button>
+            <button id="execute-btn" class="btn danger">Executar Nuke</button>
+        </div>
+        
+        <div class="output-container">
+            <h2>Saída:</h2>
+            <div class="loading" id="loading" style="display: none;">
+                <div class="spinner"></div>
+                <span>Processando...</span>
+            </div>
+            <pre id="output"></pre>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const dryRunBtn = document.getElementById('dry-run-btn');
+            const executeBtn = document.getElementById('execute-btn');
+            const outputEl = document.getElementById('output');
+            const loadingEl = document.getElementById('loading');
+            const themeToggle = document.getElementById('theme-toggle');
+            const htmlElement = document.documentElement;
+
+            // Função para alternar o tema
+            function toggleTheme(isDark) {
+                if (isDark) {
+                    htmlElement.setAttribute('data-theme', 'dark');
+                    themeToggle.checked = true;
+                } else {
+                    htmlElement.setAttribute('data-theme', 'light');
+                    themeToggle.checked = false;
+                }
+                // Salva a preferência do usuário
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            }
+
+            // Verifica se o usuário já tem uma preferência salva
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme) {
+                toggleTheme(savedTheme === 'dark');
+            } else {
+                // Verifica se o sistema do usuário prefere modo escuro
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                toggleTheme(prefersDark);
+            }
+
+            // Adiciona evento para alternar o tema
+            themeToggle.addEventListener('change', () => {
+                toggleTheme(themeToggle.checked);
+            });
+
+            const toggleLoading = (show) => {
+                loadingEl.style.display = show ? 'flex' : 'none';
+                if (show) outputEl.textContent = '';
+            };
+
+            dryRunBtn.addEventListener('click', async () => {
+                const data = {
+                    account_id: document.getElementById('account_id').value,
+                    aws_access_key: document.getElementById('aws_access_key').value,
+                    aws_secret_key: document.getElementById('aws_secret_key').value,
+                    region: document.getElementById('region').value
+                };
+
+                if (!data.account_id || !data.aws_access_key || !data.aws_secret_key) {
+                    alert('Por favor, preencha todos os campos obrigatórios');
+                    return;
+                }
+
+                toggleLoading(true);
+                try {
+                    const response = await fetch('/api/dry-run', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                    const result = await response.json();
+                    outputEl.textContent = result.success ? 
+                        result.output : `ERRO: ${result.error}\n${result.stderr}`;
+                } catch (error) {
+                    outputEl.textContent = `Erro de conexão: ${error}`;
+                } finally {
+                    toggleLoading(false);
+                }
+            });
+
+            executeBtn.addEventListener('click', async () => {
+                if (!confirm('⚠️ ATENÇÃO: Isso irá REMOVER TODOS os recursos na conta AWS. Continuar?')) {
+                    return;
+                }
+
+                const data = {
+                    account_id: document.getElementById('account_id').value,
+                    aws_access_key: document.getElementById('aws_access_key').value,
+                    aws_secret_key: document.getElementById('aws_secret_key').value,
+                    region: document.getElementById('region').value,
+                    confirmed: true
+                };
+
+                toggleLoading(true);
+                try {
+                    const response = await fetch('/api/execute', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                    });
+                    const result = await response.json();
+                    outputEl.textContent = result.success ? 
+                        `✅ Nuke executado com sucesso!\n\n${result.output}` : 
+                        `❌ Erro:\n${result.error}\n\n${result.stderr}`;
+                } catch (error) {
+                    outputEl.textContent = `Erro de conexão: ${error}`;
+                } finally {
+                    toggleLoading(false);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

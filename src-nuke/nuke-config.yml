@@ -1,0 +1,17 @@
+account-blocklist:
+  - "999999999999"
+
+accounts:
+  "${ACCOUNT_ID}":  # This will be replaced by the actual Account ID at runtime
+    # Sem filtros para permitir deletar TUDO
+
+regions:
+  - global
+  - us-east-1
+  - sa-east-1
+
+feature-flags:
+  disable-deletion-protection:
+    EC2Instance: true
+    RDSInstance: true
+    CloudformationStack: true
