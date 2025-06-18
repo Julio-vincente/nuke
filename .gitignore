@@ -49,3 +49,8 @@ Thumbs.db
 *.bak
 *.backup
 *~
+
+# Large binary files
+*.tar.gz
+aws-nuke-v*
+*.bin

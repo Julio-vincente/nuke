@@ -94,3 +94,13 @@ python test_app.py
 ## 📄 **License**
 
 MIT License - see [LICENSE](LICENSE) file for details.
+
+## 📥 **AWS Nuke Binary (Optional)**
+
+The AWS Nuke binary is not included due to GitHub file size limits. If you want to use the original AWS Nuke:
+
+1. Download from: https://github.com/rebuy-de/aws-nuke/releases
+2. Extract to `src-nuke/` directory
+3. Make executable: `chmod +x src-nuke/aws-nuke-v*`
+
+**Note:** Our custom cleaner script works without the AWS Nuke binary.
