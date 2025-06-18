@@ -1,6 +1,6 @@
 # AWS Resource Cleaner
 
-A modern web interface to clean all AWS resources from an account without requiring account alias. Uses only Account ID and temporary AWS credentials.
+A web interface to clean all AWS resources from an account without requiring account alias.
 
 ## **SECURITY: NO CREDENTIALS STORED**
 
@@ -26,28 +26,33 @@ result = subprocess.run([script], env=env, ...)
 
 ## **Quick Start**
 
-### 1. Install Dependencies
+### 1. Get repo
+```bash
+git clone https://github.com/Julio-vincente/nuke.git
+```
+
+### 2. Install Dependencies
 ```bash
 cd src-app
 pip install -r requirements.txt
 ```
 
-### 2. Run Application
+### 3. Run Application
 ```bash
 python app.py
 ```
 
-### 3. Access Interface
+### 4. Access Interface
 Open http://localhost:5000 and fill in:
 - Account ID (12 digits)
 - AWS Access Key (AKIA...)
 - AWS Secret Key (40 characters)
 - Region
 
-### 4. Test First
+### 5. Test First
 Click "🔍 Execute Dry-Run" to see what would be deleted
 
-### 5. Execute
+### 6. Execute
 Click "Execute Nuke" only if you're sure
 
 ## **Project Structure**
